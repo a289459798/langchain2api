@@ -52,7 +52,9 @@ async def doc(file: UploadFile = File(), prompt: str = Form()):
 	retriever = index.vectorstore.as_retriever()
 	qa = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever)
 
-	thread = threading.Thread(target=f, args=(qa, {'question': prompt, 'chat_history': []}))
+	def cb():
+		qa({'question': prompt, 'chat_history': []})
+	thread = threading.Thread(target=cb)
 	thread.start()
 
 	resp = StreamingResponse(callback.generate_tokens(), media_type='text/event-stream')
@@ -69,6 +71,3 @@ async def generate_stream_response(_callback: AsyncIteratorCallbackHandler, llm:
         yield token
     memory.chat_memory.add_ai_message(message)
     await task
-
-def f(qa, data):
-	qa.run(data)
