@@ -2,12 +2,12 @@ from fastapi import APIRouter, File, Form, UploadFile
 from pydantic import BaseModel
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, BaseMessage
-from langchain.callbacks import AsyncIteratorCallbackHandler, StreamingStdOutCallbackHandler
+from langchain.callbacks import AsyncIteratorCallbackHandler
 from starlette.responses import StreamingResponse
 import asyncio
 from langchain.memory import ConversationBufferMemory
 from tools.error import Abort
-from langchain.document_loaders import TextLoader
+from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader, UnstructuredExcelLoader
 from langchain.indexes import VectorstoreIndexCreator
 import shutil
 from langchain.chains import ConversationalRetrievalChain
@@ -37,12 +37,16 @@ async def chat(chat: Chat):
 
 @router.post('/doc')
 async def doc(file: UploadFile = File(), prompt: str = Form()):
-	with open(file.filename, 'wb') as buffer:
+	print(file.content_type)
+	filepath = 'tmp/' + file.filename
+	with open(filepath, 'wb') as buffer:
 		shutil.copyfileobj(file.file, buffer)
 	if file.content_type == 'text/plain':
-		loader = TextLoader(file.filename, encoding='utf8')
-	elif file.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-		return
+		loader = TextLoader(filepath, encoding='utf8')
+	elif file.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' or file.content_type == 'application/msword':
+		loader = UnstructuredWordDocumentLoader(filepath)
+	elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+		loader = UnstructuredExcelLoader(filepath)
 	else:
 		Abort(400, '文件类型不支持')
 
