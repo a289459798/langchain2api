@@ -13,6 +13,7 @@ import shutil
 from langchain.chains import ConversationalRetrievalChain
 from handlers.custom_streaming_iter import CustomStreamingIteratorCallbackHandler
 import threading
+from tools.llm import GetLLM
 
 router = APIRouter(
 	prefix='/chat',
@@ -24,19 +25,20 @@ memory = ConversationBufferMemory()
 class Chat(BaseModel):
 	chatId: str = None
 	prompt: str
+	model: str = 'openai'
 
 
 @router.post('')
 async def chat(chat: Chat):
 	callback = AsyncIteratorCallbackHandler()
-	llm = ChatOpenAI(temperature=0.9, model_name='gpt-3.5-turbo', streaming=True, callbacks=[callback], verbose=True)
+	llm = GetLLM(chat.model, callback)
 	memory.chat_memory.add_user_message(chat.prompt)
 	resp = StreamingResponse(generate_stream_response(callback, llm, memory.chat_memory.messages), media_type='text/event-stream')
 	return resp
 
 
 @router.post('/doc')
-async def doc(file: UploadFile = File(), prompt: str = Form()):
+async def doc(file: UploadFile = File(), prompt: str = Form(), model: str = Form()):
 	print(file.content_type)
 	filepath = 'tmp/' + file.filename
 	with open(filepath, 'wb') as buffer:
@@ -51,7 +53,7 @@ async def doc(file: UploadFile = File(), prompt: str = Form()):
 		Abort(400, '文件类型不支持')
 
 	callback = CustomStreamingIteratorCallbackHandler()
-	llm = ChatOpenAI(temperature=0.9, model_name='gpt-3.5-turbo', streaming=True, callbacks=[callback])
+	llm = GetLLM(model, callback)
 	index = VectorstoreIndexCreator().from_loaders([loader])
 	retriever = index.vectorstore.as_retriever()
 	qa = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever)
