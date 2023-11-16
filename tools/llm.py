@@ -10,9 +10,9 @@ def GetLLM(model: str, callback: BaseCallbackHandler = None):
 		return ChatOpenAI(temperature=0.9, model_name='gpt-3.5-turbo', streaming=True, callbacks=[callback], verbose=True)
 	elif model == 'huanyuan':
 		return ChatHunyuan(
-			hunyuan_app_id="YOUR_APP_ID",
-    			hunyuan_secret_id="YOUR_SECRET_ID",
-   			hunyuan_secret_key="YOUR_SECRET_KEY",
+			hunyuan_app_id=os.getenv('HUANYUAN_APP_ID'),
+    			hunyuan_secret_id=os.getenv('HUANYUAN_SECRET_ID'),
+   			hunyuan_secret_key=os.getenv('HUANYUAN_SECRET_KEY'),
     			streaming=True,
 		)
 	elif model == 'chatgml':
