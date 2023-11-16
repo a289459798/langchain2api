@@ -9,7 +9,6 @@ from routers import users
 from routers import chat
 from middlewares.fornt_middleware import ForntMiddleware
 from dotenv import load_dotenv
-import os
 import uvicorn
 
 app = FastAPI()
@@ -40,8 +39,6 @@ async def getHeader(user_agent: Annotated[Union[str, None], Header()] = None):
 
 
 load_dotenv()
-os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
-os.environ["OPENAI_API_BASE"] = os.getenv('OPENAI_API_BASE')
 
 if __name__ == '__main__':
       uvicorn.run(app, host="0.0.0.0", port=8000)

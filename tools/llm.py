@@ -1,9 +1,12 @@
 from langchain.chat_models import ChatOpenAI, ChatHunyuan
 from tools.error import Abort
 from langchain.callbacks.base import BaseCallbackHandler
+import os
 
 def GetLLM(model: str, callback: BaseCallbackHandler = None):
 	if model == 'openai':
+		os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+		os.environ["OPENAI_API_BASE"] = os.getenv('OPENAI_API_BASE')
 		return ChatOpenAI(temperature=0.9, model_name='gpt-3.5-turbo', streaming=True, callbacks=[callback], verbose=True)
 	elif model == 'huanyuan':
 		return ChatHunyuan(
