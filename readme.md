@@ -31,3 +31,10 @@ pip install -r requirements.txt
 cp test.env .env
 ```
 
+### 使用
+```
+python -m uvicorn main:app --reload 
+```
+
+浏览器访问
+![]http://127.0.0.1:8000/docs
