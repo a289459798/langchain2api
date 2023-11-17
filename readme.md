@@ -19,6 +19,13 @@
 ### 环境
 python >= 3.9
 
+docx文档识别需要安装`libreoffice`
+
+**mac**
+```
+brew install --cask libreoffice
+```
+
 ### 安装
 
 1、安装依赖
