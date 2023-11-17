@@ -1,6 +1,7 @@
 from langchain.chat_models import ChatOpenAI, ChatHunyuan
 from tools.error import Abort
 from langchain.callbacks.base import BaseCallbackHandler
+from custom_chat_models import ChatChatGLM
 import os
 
 def GetLLM(model: str, callback: BaseCallbackHandler = None):
@@ -17,7 +18,13 @@ def GetLLM(model: str, callback: BaseCallbackHandler = None):
 			verbose=True,
 			callbacks=[callback]
 		)
-	elif model == 'chatgml':
-		return
+	elif model == 'chatglm':
+		return ChatChatGLM(
+			chatglm_api_key=os.getenv('CHATGLM_API_KEY'),
+			chatglm_api_base=os.getenv('CHATGLM_API_BASE'),
+    			streaming=True,
+			verbose=True,
+			callbacks=[callback]
+		)
 	else:
 		Abort(500, '模型不支持')
