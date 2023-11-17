@@ -14,6 +14,8 @@ def GetLLM(model: str, callback: BaseCallbackHandler = None):
     			hunyuan_secret_id=os.getenv('HUNYUAN_SECRET_ID'),
    			hunyuan_secret_key=os.getenv('HUNYUAN_SECRET_KEY'),
     			streaming=True,
+			verbose=True,
+			callbacks=[callback]
 		)
 	elif model == 'chatgml':
 		return
