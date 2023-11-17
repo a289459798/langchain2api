@@ -1,7 +1,7 @@
 from fastapi import APIRouter, File, Form, UploadFile
 from pydantic import BaseModel
 from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage, BaseMessage
+from langchain.schema import HumanMessage, BaseMessage, AIMessage
 from langchain.callbacks import AsyncIteratorCallbackHandler
 from starlette.responses import StreamingResponse
 import asyncio
@@ -13,7 +13,7 @@ import shutil
 from langchain.chains import ConversationalRetrievalChain
 from handlers.custom_streaming_iter import CustomStreamingIteratorCallbackHandler
 import threading
-from tools.llm import GetLLM
+from tools.llm import GetLLM, GetEmbeddings
 
 router = APIRouter(
 	prefix='/chat',
@@ -54,7 +54,7 @@ async def doc(file: UploadFile = File(), prompt: str = Form(), model: str = Form
 
 	callback = CustomStreamingIteratorCallbackHandler()
 	llm = GetLLM(model, callback)
-	index = VectorstoreIndexCreator().from_loaders([loader])
+	index = VectorstoreIndexCreator(embedding=GetEmbeddings(model)).from_loaders([loader])
 	retriever = index.vectorstore.as_retriever()
 	qa = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever)
 
