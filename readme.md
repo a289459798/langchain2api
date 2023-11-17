@@ -6,15 +6,15 @@
 	- [X] word
 	- [X] txt
 	- [X] excel
-	- []  pdf
-	- []  ppt
+	- [ ] pdf
+	- [ ] ppt
 
 - 支持多模型
 	- [X] OpenAI
 	- [X] 腾讯混元
 	- [X] ChatGLM
-	- []  百度千帆
-	- []  阿里通义
+	- [ ] 百度千帆
+	- [ ] 阿里通义
 
 ### 环境
 python >= 3.9
