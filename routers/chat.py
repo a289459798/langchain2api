@@ -7,7 +7,7 @@ from starlette.responses import StreamingResponse
 import asyncio
 from langchain.memory import ConversationBufferMemory
 from tools.error import Abort
-from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader, UnstructuredExcelLoader
+from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader, UnstructuredExcelLoader, PyPDFLoader
 from langchain.indexes import VectorstoreIndexCreator
 import shutil
 from langchain.chains import ConversationalRetrievalChain
@@ -49,6 +49,8 @@ async def doc(file: UploadFile = File(), prompt: str = Form(), model: str = Form
 		loader = UnstructuredWordDocumentLoader(filepath)
 	elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
 		loader = UnstructuredExcelLoader(filepath)
+	elif file.content_type == 'application/pdf':
+		loader = PyPDFLoader(filepath)
 	else:
 		Abort(400, '文件类型不支持')
 

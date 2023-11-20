@@ -15,7 +15,7 @@ app = FastAPI()
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc:RequestValidationError):
-    return JSONResponse({'message': exc.errors()[0]['msg'] + ': ' + exc.errors()[0]['loc'][1]}, status_code=400)
+    return JSONResponse({'message': exc.errors()[0]['msg'] + ': ' + exc.errors()[0]['loc'][0]}, status_code=400)
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request, exc: StarletteHTTPException):

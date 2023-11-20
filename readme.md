@@ -6,7 +6,7 @@
 	- [X] word
 	- [X] txt
 	- [X] excel
-	- [ ] pdf
+	- [X] pdf
 	- [ ] ppt
 
 - 支持多模型
